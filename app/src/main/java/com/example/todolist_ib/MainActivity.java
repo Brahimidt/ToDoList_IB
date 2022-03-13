@@ -71,15 +71,7 @@ public class MainActivity extends AppCompatActivity {
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == MY_REQUEST_CODE) {
                String test = data.getStringExtra("value");
-
-                String myNewArray[] = new String[daily.length+1];
-                int theLengthmasuno = daily.length+1;
-
-                for (int i = 0; i < daily.length; i++) {
-                    myNewArray[i] = daily[i];
-                }
-                myNewArray[theLengthmasuno] = test+"; pediente";
-                daily = myNewArray;
+                myArrayList.add(test+" ; pediente");
                 myarray.notifyDataSetChanged();
             }
         }
