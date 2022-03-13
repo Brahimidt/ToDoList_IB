@@ -1,27 +1,51 @@
 package com.example.todolist_ib;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 
-public class MainActivity extends AppCompatActivity {
+import java.util.ArrayList;
+import java.util.Arrays;
 
+public class MainActivity extends AppCompatActivity {
+    private final static int MY_REQUEST_CODE = 1;
     ListView maListe;
+    ArrayAdapter<String> myarray;
     String daily[] = { "Sacar al perro ; pediente", "comprar el pan ; pediente",
             "revisar el correo de la salle ; pediente", "preparar reuniones del día ; pediente",
             "hacer ejercicio ; pediente" };
+    ArrayList<String> myArrayList = new ArrayList<String>(Arrays.asList(daily));
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Button button = (Button) findViewById(R.id.addButton);
+
+        String empty = "empty";
+        ajt(empty);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, MainActivity2.class);
+                startActivityForResult(intent, MY_REQUEST_CODE);
+            }
+        });
+    }
+
+    public void ajt(String test){
         maListe = findViewById(R.id.list);
-        ArrayAdapter<String> myarray;
-        myarray = new ArrayAdapter<String>(this, androidx.appcompat.R.layout.support_simple_spinner_dropdown_item, daily);
+        myarray = new ArrayAdapter<String>(this, androidx.appcompat.R.layout.support_simple_spinner_dropdown_item, myArrayList);
         maListe.setAdapter(myarray);
         maListe.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -31,22 +55,37 @@ public class MainActivity extends AppCompatActivity {
                 String[] parties = test.split(";");
                 String itBug = parties[1];
                 if(itBug.equals(" realisado")){
-                    daily[position] = parties[0]+"; pediente";
+                    myArrayList.set(position,parties[0]+"; pediente");
                 }else{
-                    daily[position] = parties[0]+"; realisado";
+                    myArrayList.set(position,parties[0]+"; realisado");
                 }
-                    myarray.notifyDataSetChanged();
-
+                myarray.notifyDataSetChanged();
 
             }
         });
+    }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == MY_REQUEST_CODE) {
+               String test = data.getStringExtra("value");
+
+                String myNewArray[] = new String[daily.length+1];
+                int theLengthmasuno = daily.length+1;
+
+                for (int i = 0; i < daily.length; i++) {
+                    myNewArray[i] = daily[i];
+                }
+                myNewArray[theLengthmasuno] = test+"; pediente";
+                daily = myNewArray;
+                myarray.notifyDataSetChanged();
+            }
+        }
     }
 
 
-    public void add(){
-
-    }
 }
 
 
